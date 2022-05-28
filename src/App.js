@@ -87,11 +87,11 @@ function App() {
 
     canvasCtx.globalCompositeOperation = "source-over";
     connect(canvasCtx, results.poseLandmarks, holisticLib.POSE_CONNECTIONS, {
-      color: "#00FF00",
+      color: "green",
       lineWidth: 4,
     });
     landmark(canvasCtx, results.poseLandmarks, {
-      color: "#FF0000",
+      color: "darkgreen",
       lineWidth: 2,
     });
     connect(
@@ -99,7 +99,7 @@ function App() {
       results.faceLandmarks,
       holisticLib.FACEMESH_TESSELATION,
       {
-        color: "#C0C0C070",
+        color: "gray",
         lineWidth: 1,
       }
     );
@@ -108,12 +108,12 @@ function App() {
       results.leftHandLandmarks,
       holisticLib.HAND_CONNECTIONS,
       {
-        color: "#CC0000",
+        color: "purple",
         lineWidth: 5,
       }
     );
     landmark(canvasCtx, results.leftHandLandmarks, {
-      color: "#00FF00",
+      color: "white",
       lineWidth: 2,
     });
     connect(
@@ -121,12 +121,12 @@ function App() {
       results.rightHandLandmarks,
       holisticLib.HAND_CONNECTIONS,
       {
-        color: "#00CC00",
+        color: "gold",
         lineWidth: 5,
       }
     );
     landmark(canvasCtx, results.rightHandLandmarks, {
-      color: "#FF0000",
+      color: "black",
       lineWidth: 2,
     });
 

@@ -61,18 +61,19 @@ function App() {
     //   }
     // }
 
-    canvasCtx.drawImage(
-      results.segmentationMask,
-      0,
-      0,
-      canvasElement.width,
-      canvasElement.height
-    );
+    // these draws the whole body
+    // canvasCtx.drawImage(
+    //   results.segmentationMask,
+    //   0,
+    //   0,
+    //   canvasElement.width,
+    //   canvasElement.height
+    // );
 
     // Only overwrite existing pixels.
-    canvasCtx.globalCompositeOperation = "source-in";
-    canvasCtx.fillStyle = "#00FF00";
-    canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+    // canvasCtx.globalCompositeOperation = "source-in";
+    // canvasCtx.fillStyle = "#00FF00";
+    // canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
 
     // Only overwrite missing pixels.
     canvasCtx.globalCompositeOperation = "destination-atop";

@@ -1,6 +1,6 @@
 import { FaceMesh } from "@mediapipe/face_mesh";
 import { Holistic } from "@mediapipe/holistic";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as Facemesh from "@mediapipe/face_mesh";
 import * as holisticLib from "@mediapipe/holistic";
 import * as cam from "@mediapipe/camera_utils";
@@ -11,6 +11,7 @@ function App() {
   const connect = window.drawConnectors;
   const landmark = window.drawLandmarks;
   var camera = null;
+  const [detectionText, setDetectionText] = useState("hello world");
   function onResults(results) {
     //TODO: moving on result stuff
     // const video = webcamRef.current.video;
@@ -112,6 +113,12 @@ function App() {
         lineWidth: 5,
       }
     );
+    // console.log(results.leftHandLandmarks);
+    if (results.leftHandLandmarks && results.leftHandLandmarks[0].y < 0.5) {
+      setDetectionText("left hand is up");
+    } else {
+      setDetectionText("left hand is down");
+    }
     landmark(canvasCtx, results.leftHandLandmarks, {
       color: "white",
       lineWidth: 2,
@@ -215,6 +222,19 @@ function App() {
           }}
         ></canvas>
       </div>
+      <h1
+        style={{
+          position: "absolute",
+          marginLeft: "auto",
+          marginRight: "auto",
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          zindex: 10,
+        }}
+      >
+        {detectionText}
+      </h1>
     </center>
   );
 }

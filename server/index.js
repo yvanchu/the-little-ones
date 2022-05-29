@@ -19,10 +19,11 @@ app.get("/textYvan", (req, res) => {
 app.get("/call", (req, res) => {
   if (req.query.number) {
     call(req.query.number);
+    res.send(`Calling ${req.query.number}!`);
   } else {
     call();
+    res.send("Calling Yvan!");
   }
-  res.send("Calling!");
 });
 
 app.post("/twiResponse", (req, res) => {

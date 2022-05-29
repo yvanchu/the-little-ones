@@ -19,7 +19,9 @@ app.get("/textYvan", (req, res) => {
 app.get("/call", (req, res) => {
   if (req.query.number) {
     call("+" + req.query.number);
-    res.send(`Calling +${req.query.number}!`);
+    res.send(
+      `We received ${req.query.number}, but we can't call it because we are on the free trial for Twilio!`
+    );
   } else {
     call();
     res.send("Calling Yvan!");
@@ -46,7 +48,7 @@ const sendTextMessage = () => {
     .catch((err) => console.log(err));
 };
 
-const call = (number = process.env.YVAN_NUMBER) => {
+const call = (number) => {
   client.calls
     .create({
       url: `${process.env.SERVER_LINK}/twiResponse`,

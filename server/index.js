@@ -17,7 +17,11 @@ app.get("/textYvan", (req, res) => {
 });
 
 app.get("/call", (req, res) => {
-  call();
+  if (req.query.number) {
+    call(req.query.number);
+  } else {
+    call();
+  }
   res.send("Calling!");
 });
 
@@ -28,7 +32,7 @@ app.post("/twiResponse", (req, res) => {
   res.end(twiml.toString());
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Twilio app listening on port ${port}!`));
 
 const sendTextMessage = () => {
   client.messages
@@ -41,12 +45,12 @@ const sendTextMessage = () => {
     .catch((err) => console.log(err));
 };
 
-const call = () => {
+const call = (number = process.env.YVAN_NUMBER) => {
   client.calls
     .create({
       url: `${process.env.SERVER_LINK}/twiResponse`,
       from: `${process.env.TWILIO_NUMBER}`,
-      to: `${process.env.YVAN_NUMBER}`,
+      to: number,
     })
     .then((call) => console.log(call.sid));
 };

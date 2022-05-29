@@ -51,7 +51,7 @@ const call = (number = process.env.YVAN_NUMBER) => {
     .create({
       url: `${process.env.SERVER_LINK}/twiResponse`,
       from: `${process.env.TWILIO_NUMBER}`,
-      to: `${process.env.EMILY_NUMBER}`,
+      to: number,
     })
     .then((call) => console.log(call.sid));
 };

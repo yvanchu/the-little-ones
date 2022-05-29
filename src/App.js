@@ -14,7 +14,7 @@ function App() {
   const connect = window.drawConnectors;
   const landmark = window.drawLandmarks;
   var camera = null;
-  const [detectionText, setDetectionText] = useState("hello world");
+  const [detectionText, setDetectionText] = useState("");
   const [calling, setCalling] = useState(false);
   const [called, setCalled] = useState(false);
 

@@ -18,8 +18,8 @@ app.get("/textYvan", (req, res) => {
 
 app.get("/call", (req, res) => {
   if (req.query.number) {
-    call(req.query.number);
-    res.send(`Calling ${req.query.number}!`);
+    call("+" + req.query.number);
+    res.send(`Calling +${req.query.number}!`);
   } else {
     call();
     res.send("Calling Yvan!");
@@ -46,12 +46,12 @@ const sendTextMessage = () => {
     .catch((err) => console.log(err));
 };
 
-const call = (number) => {
+const call = (number = process.env.YVAN_NUMBER) => {
   client.calls
     .create({
       url: `${process.env.SERVER_LINK}/twiResponse`,
       from: `${process.env.TWILIO_NUMBER}`,
-      to: number,
+      to: `${process.env.EMILY_NUMBER}`,
     })
     .then((call) => console.log(call.sid));
 };

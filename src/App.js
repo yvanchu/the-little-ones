@@ -14,8 +14,9 @@ function App() {
   const connect = window.drawConnectors;
   const landmark = window.drawLandmarks;
   var camera = null;
-  const [detectionText, setDetectionText] = useState("hello world");
-  const [textSent, setTextSent] = useState(false);
+  const [detectionText, setDetectionText] = useState("");
+  const [calling, setCalling] = useState(false);
+  const [called, setCalled] = useState(false);
 
   function onResults(results) {
     //TODO: moving on result stuff
@@ -48,35 +49,29 @@ function App() {
       lineWidth: 4,
     });
     landmark(canvasCtx, results.poseLandmarks, {
-      color: "darkgreen",
+      color: "orange",
       lineWidth: 2,
     });
-    connect(
-      canvasCtx,
-      results.faceLandmarks,
-      holisticLib.FACEMESH_TESSELATION,
-      {
-        color: "gray",
-        lineWidth: 1,
-      }
-    );
+    // connect(
+    //   canvasCtx,
+    //   results.faceLandmarks,
+    //   holisticLib.FACEMESH_TESSELATION,
+    //   {
+    //     color: "gray",
+    //     lineWidth: 1,
+    //   }
+    // );
     connect(
       canvasCtx,
       results.leftHandLandmarks,
       holisticLib.HAND_CONNECTIONS,
       {
-        color: "purple",
+        color: "white",
         lineWidth: 5,
       }
     );
-    // console.log(results.leftHandLandmarks);
-    if (results.leftHandLandmarks && results.leftHandLandmarks[0].y < 0.5) {
-      setDetectionText("left hand is up");
-    } else {
-      setDetectionText("left hand is down");
-    }
     landmark(canvasCtx, results.leftHandLandmarks, {
-      color: "white",
+      color: "black",
       lineWidth: 2,
     });
     connect(
@@ -84,7 +79,7 @@ function App() {
       results.rightHandLandmarks,
       holisticLib.HAND_CONNECTIONS,
       {
-        color: "gold",
+        color: "white",
         lineWidth: 5,
       }
     );
@@ -93,9 +88,93 @@ function App() {
       lineWidth: 2,
     });
 
+    // console.log(results.leftHandLandmarks);
+
+    // Hand behind head detection using elbow and nose
+    // It checks if one of the elbows is above the nose
+    // function handAboveNose(){
+    //   if((results.poseLandmarks[13].y < results.poseLandmarks[0].y)
+    //       || (results.poseLandmarks[14].y < results.poseLandmarks[0].y)){
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+    // }
+
+    //Mouth size
+    function mouthSize() {
+      var a = results.poseLandmarks[10].x - results.poseLandmarks[9].x;
+      var b = results.poseLandmarks[10].y - results.poseLandmarks[9].y;
+      return Math.sqrt(a * a + b * b);
+    }
+
+    // Hand behind head detection using wrist and mouth (more precise version)
+    // It checks if one of the wrists is above the mouth and close horizontally
+    function handAboveMouth() {
+      var xr = results.poseLandmarks[15].x - results.poseLandmarks[9].x;
+      var yr = results.poseLandmarks[15].y - results.poseLandmarks[9].y;
+      var dr = Math.sqrt(xr * xr + yr * yr);
+
+      var xl = results.poseLandmarks[16].x - results.poseLandmarks[10].x;
+      var yl = results.poseLandmarks[16].y - results.poseLandmarks[10].y;
+      var dl = Math.sqrt(xl * xl + yl * yl);
+
+      if (
+        (results.poseLandmarks[15].y < results.poseLandmarks[9].y &&
+          dr < 3.5 * mouthSize() &&
+          !results.leftHandLandmarks) ||
+        (results.poseLandmarks[16].y < results.poseLandmarks[10].y &&
+          dl < 3.5 * mouthSize() &&
+          !results.rightHandLandmarks)
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    // Action once it detects
+    if (handAboveMouth()) {
+      if (!calling) {
+        setCalling(true);
+      }
+      setDetectionText("hand behind head");
+      // setTimeout(() => {
+      //   fetch("http://wildhacks-twilio.herokuapp.com/call");
+      // }, 1000);
+    } else {
+      setDetectionText("hand not behind head");
+    }
+
     canvasCtx.restore();
   }
   // }
+
+  // Getting window dimensions
+  function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+      width,
+      height,
+    };
+  }
+
+  function useWindowDimensions() {
+    const [windowDimensions, setWindowDimensions] = useState(
+      getWindowDimensions()
+    );
+
+    useEffect(() => {
+      function handleResize() {
+        setWindowDimensions(getWindowDimensions());
+      }
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return windowDimensions;
+  }
 
   // setInterval(())
   useEffect(() => {
@@ -132,7 +211,16 @@ function App() {
       });
       camera.start();
     }
-  }, []);
+
+    if (calling && !called) {
+      // setTimeout(() => {
+      //   fetch("http://wildhacks-twilio.herokuapp.com/call");
+      // }, 1000);
+      setCalled(true);
+      // console.log("calling");
+      fetch("https://wildhacks-twilio.herokuapp.com/call");
+    }
+  }, [calling]);
 
   return (
     <center>
@@ -147,8 +235,8 @@ function App() {
             right: 0,
             textAlign: "center",
             zindex: 9,
-            width: 1280,
-            height: 720,
+            width: useWindowDimensions().width,
+            height: useWindowDimensions().height,
           }}
         />{" "}
         <canvas
@@ -162,13 +250,14 @@ function App() {
             right: 0,
             textAlign: "center",
             zindex: 9,
-            width: 1280,
-            height: 720,
+            width: 0.76 * useWindowDimensions().width,
+            height: useWindowDimensions().height,
           }}
         ></canvas>
       </div>
       <h1
         style={{
+          color: "green",
           position: "absolute",
           marginLeft: "auto",
           marginRight: "auto",

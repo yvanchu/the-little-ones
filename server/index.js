@@ -17,8 +17,15 @@ app.get("/textYvan", (req, res) => {
 });
 
 app.get("/call", (req, res) => {
-  call();
-  res.send("Calling!");
+  if (req.query.number) {
+    call("+" + req.query.number);
+    res.send(
+      `We received ${req.query.number}, but we can't call it because we are on the free trial for Twilio!`
+    );
+  } else {
+    call();
+    res.send("Calling Yvan!");
+  }
 });
 
 app.post("/twiResponse", (req, res) => {
@@ -28,7 +35,7 @@ app.post("/twiResponse", (req, res) => {
   res.end(twiml.toString());
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Twilio app listening on port ${port}!`));
 
 const sendTextMessage = () => {
   client.messages
@@ -41,7 +48,7 @@ const sendTextMessage = () => {
     .catch((err) => console.log(err));
 };
 
-const call = () => {
+const call = (number) => {
   client.calls
     .create({
       url: `${process.env.SERVER_LINK}/twiResponse`,

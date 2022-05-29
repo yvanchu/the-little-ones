@@ -15,7 +15,8 @@ function App() {
   const landmark = window.drawLandmarks;
   var camera = null;
   const [detectionText, setDetectionText] = useState("hello world");
-  const [textSent, setTextSent] = useState(false);
+  const [calling, setCalling] = useState(false);
+  const [called, setCalled] = useState(false);
 
   function onResults(results) {
     //TODO: moving on result stuff
@@ -101,36 +102,46 @@ function App() {
     // }
 
     //Mouth size
-    function mouthSize(){
+    function mouthSize() {
       var a = results.poseLandmarks[10].x - results.poseLandmarks[9].x;
       var b = results.poseLandmarks[10].y - results.poseLandmarks[9].y;
-      return Math.sqrt( a*a + b*b );
+      return Math.sqrt(a * a + b * b);
     }
-  
+
     // Hand behind head detection using wrist and mouth (more precise version)
     // It checks if one of the wrists is above the mouth and close horizontally
-    function handAboveMouth(){
+    function handAboveMouth() {
       var xr = results.poseLandmarks[15].x - results.poseLandmarks[9].x;
       var yr = results.poseLandmarks[15].y - results.poseLandmarks[9].y;
-      var dr = Math.sqrt( xr*xr + yr*yr );
+      var dr = Math.sqrt(xr * xr + yr * yr);
 
       var xl = results.poseLandmarks[16].x - results.poseLandmarks[10].x;
       var yl = results.poseLandmarks[16].y - results.poseLandmarks[10].y;
-      var dl = Math.sqrt( xl*xl + yl*yl );
+      var dl = Math.sqrt(xl * xl + yl * yl);
 
-      if(((results.poseLandmarks[15].y < results.poseLandmarks[9].y) &&
-          (dr < 3.5*mouthSize()) && !results.leftHandLandmarks) || 
-          ((results.poseLandmarks[16].y < results.poseLandmarks[10].y) &&
-          (dl < 3.5*mouthSize()) && !results.rightHandLandmarks)){
-        return true
+      if (
+        (results.poseLandmarks[15].y < results.poseLandmarks[9].y &&
+          dr < 3.5 * mouthSize() &&
+          !results.leftHandLandmarks) ||
+        (results.poseLandmarks[16].y < results.poseLandmarks[10].y &&
+          dl < 3.5 * mouthSize() &&
+          !results.rightHandLandmarks)
+      ) {
+        return true;
       } else {
-        return false
+        return false;
       }
     }
 
     // Action once it detects
     if (handAboveMouth()) {
+      if (!calling) {
+        setCalling(true);
+      }
       setDetectionText("hand behind head");
+      // setTimeout(() => {
+      //   fetch("http://wildhacks-twilio.herokuapp.com/call");
+      // }, 1000);
     } else {
       setDetectionText("hand not behind head");
     }
@@ -144,22 +155,24 @@ function App() {
     const { innerWidth: width, innerHeight: height } = window;
     return {
       width,
-      height
+      height,
     };
   }
-  
+
   function useWindowDimensions() {
-    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-  
+    const [windowDimensions, setWindowDimensions] = useState(
+      getWindowDimensions()
+    );
+
     useEffect(() => {
       function handleResize() {
         setWindowDimensions(getWindowDimensions());
       }
-  
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }, []);
-  
+
     return windowDimensions;
   }
 
@@ -198,7 +211,16 @@ function App() {
       });
       camera.start();
     }
-  }, []);
+
+    if (calling && !called) {
+      // setTimeout(() => {
+      //   fetch("http://wildhacks-twilio.herokuapp.com/call");
+      // }, 1000);
+      setCalled(true);
+      // console.log("calling");
+      fetch("https://wildhacks-twilio.herokuapp.com/call");
+    }
+  }, [calling]);
 
   return (
     <center>
@@ -228,7 +250,7 @@ function App() {
             right: 0,
             textAlign: "center",
             zindex: 9,
-            width: 0.76*useWindowDimensions().width,
+            width: 0.76 * useWindowDimensions().width,
             height: useWindowDimensions().height,
           }}
         ></canvas>

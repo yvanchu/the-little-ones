@@ -290,7 +290,7 @@ function App() {
       </div>
       <h1
         style={{
-          color: "lawngreen",
+          color: "green",
           position: "absolute",
           marginLeft: "auto",
           marginRight: "auto",

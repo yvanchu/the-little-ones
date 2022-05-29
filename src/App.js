@@ -5,6 +5,9 @@ import * as Facemesh from "@mediapipe/face_mesh";
 import * as holisticLib from "@mediapipe/holistic";
 import * as cam from "@mediapipe/camera_utils";
 import Webcam from "react-webcam";
+
+const { Device } = require("twilio-client");
+
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -12,6 +15,12 @@ function App() {
   const landmark = window.drawLandmarks;
   var camera = null;
   const [detectionText, setDetectionText] = useState("hello world");
+
+  const [twilioState, setTwilioState] = useState({
+    identity: "",
+    status: "",
+    ready: false,
+  });
   function onResults(results) {
     //TODO: moving on result stuff
     // const video = webcamRef.current.video;
@@ -143,6 +152,45 @@ function App() {
 
   // setInterval(())
   useEffect(() => {
+    const device = new Device();
+
+    setTwilioState({
+      ...twilioState,
+      device: device,
+    });
+
+    device.on("incoming", (connection) => {
+      // immediately accepts incoming connection
+      connection.accept();
+
+      setTwilioState({
+        ...twilioState,
+        status: connection.status(),
+      });
+    });
+
+    device.on("ready", (device) => {
+      setTwilioState({
+        ...twilioState,
+        status: "device ready",
+        ready: true,
+      });
+    });
+
+    device.on("connect", (connection) => {
+      setTwilioState({
+        ...twilioState,
+        status: connection.status(),
+      });
+    });
+
+    device.on("disconnect", (connection) => {
+      setTwilioState({
+        ...twilioState,
+        status: connection.status(),
+      });
+    });
+
     const holistic = new Holistic({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
@@ -189,6 +237,36 @@ function App() {
       camera.start();
     }
   }, []);
+
+  const setup = (event) => {
+    // prevents form submission and page refresh
+    event.preventDefault();
+    fetch(
+      `https://token-service-1440-dev.twil.io/token?identity=${twilioState.identity}`
+    )
+      .then((response) => {
+        response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        twilioState.device.setup(data.accessToken);
+        twilioState.device.audio.incoming(false);
+        twilioState.device.audio.outgoing(false);
+        twilioState.device.audio.disconnect(false);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const connectAudio = () => {
+    const recipient =
+      twilioState.identity === "friend1" ? "friend2" : "friend1";
+    twilioState.device.connect({ recipient: recipient });
+  };
+
+  const disconnectAudio = () => {
+    twilioState.device.disconnectAll();
+  };
+
   return (
     <center>
       <div className="App">
@@ -235,6 +313,56 @@ function App() {
       >
         {detectionText}
       </h1>
+      {/* <button
+        style={{
+          position: "absolute",
+          marginLeft: "auto",
+          marginRight: "auto",
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          zindex: 11,
+        }}
+        onClick={() => {
+          makeOutgoingCall();
+        }}
+      >
+        Call
+      </button> */}
+      <div
+        style={{
+          position: "absolute",
+          marginLeft: "auto",
+          marginRight: "auto",
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          zindex: 11,
+        }}
+      >
+        {twilioState.ready ? (
+          <button>Press to Talk</button>
+        ) : (
+          <div>
+            <p>Enter your name to begin.</p>
+            <form onSubmit={(e) => setup(e)}>
+              <input
+                type="text"
+                placeholder="What's your name?"
+                value={twilioState.identity}
+                onChange={(e) =>
+                  setTwilioState({ ...twilioState, identity: e.target.value })
+                }
+              ></input>
+              <input type="submit" value="Begin Session"></input>
+            </form>
+            <button onMouseDown={connectAudio} onMouseUp={disconnectAudio}>
+              Press to Talk
+            </button>
+          </div>
+        )}
+        <p>{twilioState.status}</p>
+      </div>
     </center>
   );
 }

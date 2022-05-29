@@ -14,12 +14,11 @@ function App() {
   const connect = window.drawConnectors;
   const landmark = window.drawLandmarks;
   var camera = null;
-  const [detectionText, setDetectionText] = useState("");
+  const [detectionText, setDetectionText] = useState("ML Loading");
   const [calling, setCalling] = useState(false);
   const [called, setCalled] = useState(false);
 
   function onResults(results) {
-    //TODO: moving on result stuff
     const videoWidth = webcamRef.current.video.videoWidth;
     const videoHeight = webcamRef.current.video.videoHeight;
 
@@ -45,11 +44,11 @@ function App() {
 
     canvasCtx.globalCompositeOperation = "source-over";
     connect(canvasCtx, results.poseLandmarks, holisticLib.POSE_CONNECTIONS, {
-      color: "green",
+      color: "purple",
       lineWidth: 4,
     });
     landmark(canvasCtx, results.poseLandmarks, {
-      color: "orange",
+      color: "white",
       lineWidth: 2,
     });
     // connect(
@@ -66,12 +65,12 @@ function App() {
       results.leftHandLandmarks,
       holisticLib.HAND_CONNECTIONS,
       {
-        color: "white",
+        color: "purple",
         lineWidth: 5,
       }
     );
     landmark(canvasCtx, results.leftHandLandmarks, {
-      color: "black",
+      color: "white",
       lineWidth: 2,
     });
     connect(
@@ -79,27 +78,29 @@ function App() {
       results.rightHandLandmarks,
       holisticLib.HAND_CONNECTIONS,
       {
-        color: "white",
+        color: "purple",
         lineWidth: 5,
       }
     );
     landmark(canvasCtx, results.rightHandLandmarks, {
-      color: "black",
+      color: "white",
       lineWidth: 2,
     });
 
-    // console.log(results.leftHandLandmarks);
+    console.log(results.leftHandLandmarks);
 
     // Hand behind head detection using elbow and nose
     // It checks if one of the elbows is above the nose
-    // function handAboveNose(){
-    //   if((results.poseLandmarks[13].y < results.poseLandmarks[0].y)
-    //       || (results.poseLandmarks[14].y < results.poseLandmarks[0].y)){
-    //     return true
-    //   } else {
-    //     return false
-    //   }
-    // }
+    function handAboveNose() {
+      if (
+        results.poseLandmarks[13].y < results.poseLandmarks[0].y ||
+        results.poseLandmarks[14].y < results.poseLandmarks[0].y
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
 
     //Mouth size
     function mouthSize() {
@@ -138,15 +139,15 @@ function App() {
       if (!calling) {
         setCalling(true);
       }
-      setDetectionText("hand behind head");
+      setDetectionText("Detection Hit");
       // setTimeout(() => {
       //   fetch("http://wildhacks-twilio.herokuapp.com/call");
       // }, 1000);
     } else {
-      setDetectionText("hand not behind head");
+      setDetectionText("ML Live");
     }
 
-    canvasCtx.restore();
+    // canvasCtx.restore();
   }
   // }
 
@@ -222,6 +223,11 @@ function App() {
     }
   }, [calling]);
 
+  const MLStatus = {
+    backgroundColor: detectionText === "ML Loading" ? "red" : "green",
+  };
+  const CallStatus = { backgroundColor: called ? "green" : "red" };
+
   return (
     <center>
       <div className="App">
@@ -237,6 +243,7 @@ function App() {
             zindex: 9,
             width: useWindowDimensions().width,
             height: useWindowDimensions().height,
+            display: "none",
           }}
         />{" "}
         <canvas
@@ -255,20 +262,50 @@ function App() {
           }}
         ></canvas>
       </div>
-      <h1
+      <h2
         style={{
-          color: "green",
           position: "absolute",
-          marginLeft: "auto",
-          marginRight: "auto",
-          left: 0,
-          right: 0,
-          textAlign: "center",
+          color: "green",
+          right: "35px",
+          top: "5px",
           zindex: 10,
+          display: "inline-block",
         }}
       >
-        {detectionText}
-      </h1>
+        ML Status:
+        <span
+          style={{
+            position: "absolute",
+            height: "1em",
+            width: "1em",
+            borderRadius: "50%",
+            display: "inline-block",
+            ...MLStatus,
+          }}
+        ></span>
+      </h2>
+      <h2
+        style={{
+          position: "absolute",
+          color: "green",
+          right: "35px",
+          top: "35px",
+          zindex: 10,
+          display: "inline-block",
+        }}
+      >
+        Call Triggered:
+        <span
+          style={{
+            position: "absolute",
+            height: "1em",
+            width: "1em",
+            borderRadius: "50%",
+            display: "inline-block",
+            ...CallStatus,
+          }}
+        ></span>
+      </h2>
       <div
         style={{
           position: "absolute",

@@ -16,14 +16,8 @@ function App() {
   var camera = null;
   const [detectionText, setDetectionText] = useState("hello world");
 
-  const [twilioState, setTwilioState] = useState({
-    identity: "",
-    status: "",
-    ready: false,
-  });
   function onResults(results) {
     //TODO: moving on result stuff
-    // const video = webcamRef.current.video;
     const videoWidth = webcamRef.current.video.videoWidth;
     const videoHeight = webcamRef.current.video.videoHeight;
 
@@ -36,54 +30,6 @@ function App() {
 
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    // canvasCtx.drawImage(
-    //   results.image,
-    //   0,
-    //   0,
-    //   canvasElement.width,
-    //   canvasElement.height
-    // );
-
-    // if (results.multiFaceLandmarks) {
-    //   for (const landmarks of results.multiFaceLandmarks) {
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_TESSELATION, {
-    //       color: "#C0C0C070",
-    //       lineWidth: 1,
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_RIGHT_EYE, {
-    //       color: "#FF3030",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_RIGHT_EYEBROW, {
-    //       color: "#FF3030",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_LEFT_EYE, {
-    //       color: "#30FF30",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_LEFT_EYEBROW, {
-    //       color: "#30FF30",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_FACE_OVAL, {
-    //       color: "#E0E0E0",
-    //     });
-    //     connect(canvasCtx, landmarks, Facemesh.FACEMESH_LIPS, {
-    //       color: "#E0E0E0",
-    //     });
-    //   }
-    // }
-
-    // these draws the whole body
-    // canvasCtx.drawImage(
-    //   results.segmentationMask,
-    //   0,
-    //   0,
-    //   canvasElement.width,
-    //   canvasElement.height
-    // );
-
-    // Only overwrite existing pixels.
-    // canvasCtx.globalCompositeOperation = "source-in";
-    // canvasCtx.fillStyle = "#00FF00";
-    // canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
 
     // Only overwrite missing pixels.
     canvasCtx.globalCompositeOperation = "destination-atop";
@@ -154,43 +100,6 @@ function App() {
   useEffect(() => {
     const device = new Device();
 
-    setTwilioState({
-      ...twilioState,
-      device: device,
-    });
-
-    device.on("incoming", (connection) => {
-      // immediately accepts incoming connection
-      connection.accept();
-
-      setTwilioState({
-        ...twilioState,
-        status: connection.status(),
-      });
-    });
-
-    device.on("ready", (device) => {
-      setTwilioState({
-        ...twilioState,
-        status: "device ready",
-        ready: true,
-      });
-    });
-
-    device.on("connect", (connection) => {
-      setTwilioState({
-        ...twilioState,
-        status: connection.status(),
-      });
-    });
-
-    device.on("disconnect", (connection) => {
-      setTwilioState({
-        ...twilioState,
-        status: connection.status(),
-      });
-    });
-
     const holistic = new Holistic({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${file}`;
@@ -209,20 +118,6 @@ function App() {
 
     holistic.onResults(onResults);
 
-    // const faceMesh = new FaceMesh({
-    //   locateFile: (file) => {
-    //     return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-    //   },
-    // });
-
-    // faceMesh.setOptions({
-    //   maxNumFaces: 1,
-    //   minDetectionConfidence: 0.5,
-    //   minTrackingConfidence: 0.5,
-    // });
-
-    // faceMesh.onResults(onResults);
-
     if (
       typeof webcamRef.current !== "undefined" &&
       webcamRef.current !== null
@@ -237,35 +132,6 @@ function App() {
       camera.start();
     }
   }, []);
-
-  const setup = (event) => {
-    // prevents form submission and page refresh
-    event.preventDefault();
-    fetch(
-      `https://token-service-1440-dev.twil.io/token?identity=${twilioState.identity}`
-    )
-      .then((response) => {
-        response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        twilioState.device.setup(data.accessToken);
-        twilioState.device.audio.incoming(false);
-        twilioState.device.audio.outgoing(false);
-        twilioState.device.audio.disconnect(false);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const connectAudio = () => {
-    const recipient =
-      twilioState.identity === "friend1" ? "friend2" : "friend1";
-    twilioState.device.connect({ recipient: recipient });
-  };
-
-  const disconnectAudio = () => {
-    twilioState.device.disconnectAll();
-  };
 
   return (
     <center>
@@ -313,22 +179,6 @@ function App() {
       >
         {detectionText}
       </h1>
-      {/* <button
-        style={{
-          position: "absolute",
-          marginLeft: "auto",
-          marginRight: "auto",
-          left: 0,
-          right: 0,
-          textAlign: "center",
-          zindex: 11,
-        }}
-        onClick={() => {
-          makeOutgoingCall();
-        }}
-      >
-        Call
-      </button> */}
       <div
         style={{
           position: "absolute",
@@ -339,30 +189,7 @@ function App() {
           textAlign: "center",
           zindex: 11,
         }}
-      >
-        {twilioState.ready ? (
-          <button>Press to Talk</button>
-        ) : (
-          <div>
-            <p>Enter your name to begin.</p>
-            <form onSubmit={(e) => setup(e)}>
-              <input
-                type="text"
-                placeholder="What's your name?"
-                value={twilioState.identity}
-                onChange={(e) =>
-                  setTwilioState({ ...twilioState, identity: e.target.value })
-                }
-              ></input>
-              <input type="submit" value="Begin Session"></input>
-            </form>
-            <button onMouseDown={connectAudio} onMouseUp={disconnectAudio}>
-              Press to Talk
-            </button>
-          </div>
-        )}
-        <p>{twilioState.status}</p>
-      </div>
+      ></div>
     </center>
   );
 }

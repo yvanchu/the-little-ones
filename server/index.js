@@ -46,7 +46,7 @@ const sendTextMessage = () => {
     .catch((err) => console.log(err));
 };
 
-const call = (number = process.env.YVAN_NUMBER) => {
+const call = (number) => {
   client.calls
     .create({
       url: `${process.env.SERVER_LINK}/twiResponse`,

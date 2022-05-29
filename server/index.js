@@ -7,6 +7,10 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.get("/", (req, res) => {
+  res.send("Hey there, you aren't supposed to be here!");
+});
+
 app.get("/textYvan", (req, res) => {
   sendTextMessage();
   res.send("Text message sent!");
@@ -40,7 +44,7 @@ const sendTextMessage = () => {
 const call = () => {
   client.calls
     .create({
-      url: "https://884b-207-237-240-65.ngrok.io/twiResponse",
+      url: `${process.env.SERVER_LINK}/twiResponse`,
       from: `${process.env.TWILIO_NUMBER}`,
       to: `${process.env.YVAN_NUMBER}`,
     })

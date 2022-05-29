@@ -7,20 +7,6 @@ import * as cam from "@mediapipe/camera_utils";
 import Webcam from "react-webcam";
 
 const { Device } = require("twilio-client");
-// const accountSid = process.env.TWILIO_ACCOUNT_SID;
-// const authToken = process.env.TWILIO_AUTH_TOKEN;
-// const client = require("twilio")(accountSid, authToken);
-
-// const sendTextMessage = () => {
-//   client.messages
-//     .create({
-//       body: "Hello from Twilio!",
-//       from: "+16172300023",
-//       to: `${process.env.TWILIO_NUMBER}`,
-//     })
-//     .then((message) => console.log(message.sid))
-//     .catch((err) => console.log(err));
-// };
 
 function App() {
   const webcamRef = useRef(null);

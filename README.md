@@ -1,70 +1,33 @@
-# Getting Started with Create React App
+## Inspiration
+The whole team wanted to learn something new for Wildhacks, so we decided to try out gesture tracking with MediaPipe and text/call with Twilio. We thought Alex Cornell and Phil Mills’s usetickle.com was super funny– so we made an inferior version of it :D
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## What it does
+You can scratch the back of your head in front of your laptop camera to trigger a fake phone call and get you out of awkward situations.
 
-## Available Scripts
+## How we built it
+We used MediaPipe for gesture tracking, Twilio for voice/call integration with phones, the frontend was built with React, backend built with Node.js, express.js, and hosted using Heroku and Github Pages for backend and frontend respectively.
 
-In the project directory, you can run:
+We spent the first three hours learning how to use MediaPipe by follow this YouTube tutorial: https://www.youtube.com/watch?v=oNB5hVabqL4. Then we modified to code to support full holistic body tracking.
 
-### `npm start`
+Davi implemented the gesture recognition for head scratching. Rui helped set up the Twilio account for call/sms integration. Annie designed a Figma prototype to demonstrate the final concept (https://www.figma.com/proto/cxTyzFPKs1mpy8jvBn2Lwj/WildHacks-2022---Laptop?node-id=13%3A5&scaling=scale-down&page-id=0%3A1&starting-point-node-id=13%3A5). 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Challenges we ran into
+Figure out what gestures to use
+Integrating Twilio API to make the phone call and send messages
+Coding the gesture detection algorithm.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Accomplishments that we're proud of
+Coding a somewhat precise gesture detection algorithm. 
+Using React for the first time and making it work.
+Use the Figma for a prototype of our app
 
-### `npm test`
+## What we learned
+How to use media pipe to track gestures with the webcam on our laptops
+Creating a server for Twilio API 
+The basics of React.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## What's next for Wing
+[] Mobile phone compatibility with our web app
+[] Add in more detectors for more complex gestures (maybe spell casting-like gestures with voice recognition)
+[] Consider other features to connect it with (IFTTT, automate.io, etc)
+[] Develop fully functional gesture interface for computers/phones

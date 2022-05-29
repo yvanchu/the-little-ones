@@ -11,23 +11,11 @@ We spent the first three hours learning how to use MediaPipe by follow this YouT
 
 Davi implemented the gesture recognition for head scratching. Rui helped set up the Twilio account for call/sms integration. Annie designed a Figma prototype to demonstrate the final concept (https://www.figma.com/proto/cxTyzFPKs1mpy8jvBn2Lwj/WildHacks-2022---Laptop?node-id=13%3A5&scaling=scale-down&page-id=0%3A1&starting-point-node-id=13%3A5). 
 
-## Challenges we ran into
-Figure out what gestures to use
-Integrating Twilio API to make the phone call and send messages
-Coding the gesture detection algorithm.
-
-## Accomplishments that we're proud of
-Coding a somewhat precise gesture detection algorithm. 
-Using React for the first time and making it work.
-Use the Figma for a prototype of our app
-
-## What we learned
-How to use media pipe to track gestures with the webcam on our laptops
-Creating a server for Twilio API 
-The basics of React.
-
 ## What's next for Wing
-[] Mobile phone compatibility with our web app
-[] Add in more detectors for more complex gestures (maybe spell casting-like gestures with voice recognition)
-[] Consider other features to connect it with (IFTTT, automate.io, etc)
-[] Develop fully functional gesture interface for computers/phones
+Mobile phone compatibility with our web app
+
+Add in more detectors for more complex gestures (maybe spell casting-like gestures with voice recognition)
+
+Consider other features to connect it with (IFTTT, automate.io, etc)
+
+Develop fully functional gesture interface for computers/phones

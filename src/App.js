@@ -22,7 +22,7 @@ function App() {
     const videoWidth = webcamRef.current.video.videoWidth;
     const videoHeight = webcamRef.current.video.videoHeight;
 
-    // Set canvas width
+    // Set the canvas width
     canvasRef.current.width = videoWidth;
     canvasRef.current.height = videoHeight;
 
@@ -32,7 +32,7 @@ function App() {
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-    // Only overwrite missing pixels.
+    // Only overwrite the missing pixels.
     canvasCtx.globalCompositeOperation = "destination-atop";
     canvasCtx.drawImage(
       results.image,
